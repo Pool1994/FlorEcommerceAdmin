@@ -52,9 +52,9 @@ const login = async () => {
         email: credentials.value.email,
         password: credentials.value.password,
       },
-      onResponseError({ response }) {
-        errors.value = response._data.errors
-      },
+      // onResponseError({ response }) {
+      //   errors.value = response._data.errors
+      // },
     })
 
     const { accessToken, userData, userAbilityRules } = res

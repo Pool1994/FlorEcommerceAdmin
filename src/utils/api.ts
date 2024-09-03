@@ -1,4 +1,4 @@
-import { ofetch } from 'ofetch'
+import { ofetch } from 'ofetch';
 
 export const $api = ofetch.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
@@ -11,4 +11,11 @@ export const $api = ofetch.create({
       }
     }
   },
+  async onResponseError({ request, options, error }) {
+    alert('onResponseError')
+  },
+  onRequestError({ request, options, response }) {
+    alert('onRequestError')
+  },
+
 })
