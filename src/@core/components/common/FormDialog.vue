@@ -23,7 +23,7 @@ const onCancel = () => {
 <template>
   <VDialog
     :model-value="$props.show"
-    :max-width="width"
+    :max-width="width ? width : 600"
     persistent
     offset="v-dialog"
     :scrollable="scrollable"

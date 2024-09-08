@@ -32,6 +32,7 @@ const table = ref();
     :items-per-page="perPage"
     :items="items"
     :page="currentPage"
+    density="compact"
   >
     <template
       v-for="header in fields"

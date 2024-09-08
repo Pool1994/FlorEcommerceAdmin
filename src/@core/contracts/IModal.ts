@@ -9,5 +9,5 @@ export interface IModal<T> {
 }
 export interface EmitEvents<T> {
   (e: "update:modal", modal: ModalProps<T>): void;
-  (e: "reload"): void;
+  (e: "reload", model: T): void;
 }

@@ -31,7 +31,7 @@ class CategoryService implements ICrudOperation<CategoryModel, CategoryForm> {
   }
   async delete(id: number) {
     try {
-      const { data } = await $axiosIns.delete<CategoryModel>(`/category/delete/${id}`);
+      const { data } = await $axiosIns.delete<string>(`/category/delete/${id}`);
       return data;
     } catch (ex) {
       throw ex;

@@ -103,3 +103,10 @@ export const alphaDashValidator = (value: unknown) => {
 
   return /^[\w-]*$/.test(valueAsString) || 'All Character are not valid'
 }
+// 👉 Alpha Validator
+export const alphaValidatorSpace = (value: unknown) => {
+  if (isEmpty(value))
+    return true
+
+  return /^[a-zA-Z áéíóúÁÉÍÓÚñÑäëïöüÄËÏÖÜ]*$/i.test(String(value)) || 'The Alpha field may only contain alphabetic characters'
+}
