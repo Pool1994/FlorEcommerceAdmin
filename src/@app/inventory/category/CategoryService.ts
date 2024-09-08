@@ -1,5 +1,5 @@
 import { ApiResponsePaginate } from "@/@core/utils/contracts-commons";
-import { ICrudOperation } from "../../shared/ICrudOperation";
+import { ICrudOperation, ResponseHttpApi } from "../../shared/ICrudOperation";
 import { CategoryForm, CategoryModel } from "./ICategoryContracts";
 
 class CategoryService implements ICrudOperation<CategoryModel, CategoryForm> {
@@ -15,15 +15,15 @@ class CategoryService implements ICrudOperation<CategoryModel, CategoryForm> {
   }
   async register(params: CategoryForm) {
     try {
-      const { data } = await $axiosIns.post<CategoryModel>('/category/register', params);
+      const { data } = await $axiosIns.post<ResponseHttpApi<CategoryModel>>('/category/register', params);
       return data;
     } catch (ex) {
       throw ex;
     }
   }
-  async update(params: CategoryForm, id: number): Promise<CategoryModel> {
+  async update(params: CategoryForm, id: number) {
     try {
-      const { data } = await $axiosIns.put<CategoryModel>(`/category/update/${id}`, params);
+      const { data } = await $axiosIns.put<ResponseHttpApi<CategoryModel>>(`/category/update/${id}`, params);
       return data;
     } catch (ex) {
       throw ex;

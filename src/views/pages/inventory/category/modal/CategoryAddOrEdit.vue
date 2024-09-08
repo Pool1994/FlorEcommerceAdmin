@@ -32,11 +32,9 @@ const save = async () => {
     } else {
       result = await CategoryService.register(form.value);
     }
-    notifySuccess(
-      `Categoria ${modal.item?.id ? "actualizada" : "registrada"} correctamente`
-    );
+    notifySuccess(result.message);
     close();
-    emits("reload", result);
+    emits("reload", result.response);
   } catch (ex: any) {
     notifyError(ex.message);
   }
