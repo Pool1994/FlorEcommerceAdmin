@@ -37,5 +37,19 @@ class CategoryService implements ICrudOperation<CategoryModel, CategoryForm> {
       throw ex;
     }
   }
+  async getCategories() {
+    try {
+      const { data } = await $axiosIns.get<ApiResponsePaginate<CategoryModel>>('/category/list', {
+        params: {
+          itemsPerPage: 1000,
+          page: 1,
+          search: '',
+        }
+      });
+      return data.data.map(item => ({ id: item.id, text: item.name }));
+    } catch (ex) {
+      throw ex;
+    }
+  }
 }
 export default new CategoryService();
