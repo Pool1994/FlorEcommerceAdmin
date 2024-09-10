@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import CategoryService from "@/@app/inventory/category/CategoryService";
 import {
-  CategoryForm,
-  CategoryModel,
-} from "@/@app/inventory/category/ICategoryContracts";
+  PackagingForm,
+  PackagingModel,
+} from "@/@app/inventory/packaging/IPackagingContracts";
+import PackagingService from "@/@app/inventory/packaging/PackagingService";
 import { EmitEvents, IModal } from "@/@core/contracts/IModal";
 import { VForm } from "vuetify/components";
 
-const { modal } = defineProps<IModal<CategoryModel>>();
-const emits = defineEmits<EmitEvents<CategoryModel>>();
-const formCategory = ref<InstanceType<typeof VForm>>();
+const { modal } = defineProps<IModal<PackagingModel>>();
+const emits = defineEmits<EmitEvents<PackagingModel>>();
+const formPacking = ref<InstanceType<typeof VForm>>();
 const close = () => {
   emits("update:modal", {
     show: false,
@@ -18,19 +18,18 @@ const close = () => {
     title: modal.title,
   });
 };
-const form = ref<CategoryForm>({
-  name: "",
+const form = ref<PackagingForm>({
   description: "",
 });
 const save = async () => {
   try {
-    if (await !formCategory.value?.validate())
+    if (await !formPacking.value?.validate())
       throw new Error("Ingrese los campos requeridos");
     let result;
     if (modal.item?.id) {
-      result = await CategoryService.update(form.value, modal.item?.id ?? 0);
+      result = await PackagingService.update(form.value, modal.item?.id ?? 0);
     } else {
-      result = await CategoryService.register(form.value);
+      result = await PackagingService.register(form.value);
     }
     notifySuccess(result.message);
     close();
@@ -43,7 +42,6 @@ watch(
   () => modal.item,
   (value) => {
     if (value) {
-      form.value.name = value.name;
       form.value.description = value.description;
     }
   },
@@ -60,33 +58,24 @@ watch(
     <template #content>
       <VForm
         lazy-validation
-        ref="formCategory"
+        ref="formPacking"
         @submit.prevent="save"
-        id="formularioCategory"
+        id="formularioPacking"
       >
         <VRow>
           <VCol cols="12">
-            <AppTextField
-              v-model="form.name"
-              label="Nombre"
-              placeholder="Nombre"
-              :rules="[requiredValidator, alphaValidatorSpace]"
-            />
-          </VCol>
-          <VCol cols="12">
-            <AppTextarea
-              rows="3"
+            <VTextField
               v-model="form.description"
-              label="Descripción"
-              placeholder="Descripción"
-              no-resize
+              label="Descripcion"
+              placeholder="Nombre"
+              :rules="[requiredValidator]"
             />
           </VCol>
         </VRow>
       </VForm>
     </template>
     <template #actions>
-      <VBtn type="submit" form="formularioCategory">
+      <VBtn type="submit" form="formularioPacking">
         {{ modal.item?.id ? "EDITAR" : "Guardar" }}
       </VBtn>
     </template>
