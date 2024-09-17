@@ -25,7 +25,7 @@ export default defineConfig({
           .toLowerCase()
       },
       beforeWriteFiles: root => {
-       
+
       },
     }),
     vue({

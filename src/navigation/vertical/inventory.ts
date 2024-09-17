@@ -27,6 +27,10 @@ const inventory: Array<NavLink | NavGroup | NavSectionTitle> = [
       {
         title: 'Productos',
         to: 'inventory-product'
+      },
+      {
+        title: 'Almacenes',
+        to: 'inventory-warehouse'
       }
     ]
   }

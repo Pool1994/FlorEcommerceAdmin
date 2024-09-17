@@ -138,13 +138,13 @@ export default {
     variant: 'outlined',
     density: 'comfortable',
     color: 'primary',
-    hideDetails: 'auto',
+    hideDetails: 'false',
   },
   VAutocomplete: {
     variant: 'outlined',
     color: 'primary',
     density: 'comfortable',
-    hideDetails: 'auto',
+    hideDetails: 'false',
     menuProps: {
       contentClass: 'app-autocomplete__content v-autocomplete__content',
     },
@@ -156,7 +156,7 @@ export default {
     variant: 'outlined',
     density: 'comfortable',
     color: 'primary',
-    hideDetails: 'auto',
+    hideDetails: 'false',
     VChip: {
       label: true,
     },
@@ -165,13 +165,13 @@ export default {
     variant: 'outlined',
     density: 'comfortable',
     color: 'primary',
-    hideDetails: 'auto',
+    hideDetails: 'false',
   },
   VTextarea: {
     variant: 'outlined',
     density: 'comfortable',
     color: 'primary',
-    hideDetails: 'auto',
+    hideDetails: 'false',
   },
   VSnackbar: {
     VBtn: {
