@@ -11,6 +11,7 @@ onMounted(async () => {
   await useStore.getCategories();
   await useStore.getBrands();
   await useStore.getTaxes();
+  await useStore.getWareHouses();
 });
 </script>
 <template>
@@ -153,5 +154,56 @@ onMounted(async () => {
       </h5>
     </v-card-title>
     <v-divider></v-divider>
+    <v-card-text>
+      <div
+        v-for="(item, index) in useStore.detailsInventory"
+        :key="index"
+        class="container-detail-inventory"
+      >
+        <div class="detail-icon">
+          <v-icon icon="tabler-stack-2" size="25"></v-icon>
+        </div>
+        <div class="detail-container">
+          <p class="item">{{ item.ware_house }}</p>
+          <p class="item totales">
+            <template v-if="item.completed">
+              {{ item.quantity }} {{ item.minimum_quantity }} -
+              {{ item.maximum_quantity }}
+            </template>
+            <template v-else> Agrega aquí la cantidad inicial de tu producto </template>
+          </p>
+        </div>
+        <div class="detail-actions">
+          <v-icon size="30" icon="tabler-dots-vertical"></v-icon>
+        </div>
+      </div>
+    </v-card-text>
   </v-card>
 </template>
+<style lang="scss">
+.container-detail-inventory {
+  padding: 10px 5px;
+  display: flex;
+  .detail-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--v-primary-base);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: white solid 1px;
+  }
+  > .detail-container {
+    flex-grow: 2;
+    padding: 5px 10px;
+    p.item {
+      font-weight: bold;
+      margin: 0;
+    }
+    p.totales {
+      font-size: 0.8rem;
+    }
+  }
+}
+</style>

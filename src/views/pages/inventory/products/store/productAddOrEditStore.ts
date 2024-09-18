@@ -1,8 +1,9 @@
 import { BrandModel } from "@/@app/inventory/brand/IBrandContracts";
 import { CategoryModel } from "@/@app/inventory/category/ICategoryContracts";
-import { IProductForm } from "@/@app/inventory/products/IProductoContract";
+import { IDetailInventoryForm, IProductForm } from "@/@app/inventory/products/IProductoContract";
 import ProductRelationsService from "@/@app/inventory/products/services/ProductRelationsService";
 import { SubCategoryModel } from "@/@app/inventory/subcategory/ISubCategoryContracts";
+import { WareHouseModel } from "@/@app/inventory/warehouse/IWareHouse";
 import { ISunatProductCode, TaxModel } from "@/@app/shared/ISunatProductCode";
 
 export const useProductForm = defineStore('productAddOrEditStore', () => {
@@ -29,7 +30,8 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
   const brands = ref<BrandModel[]>([]);
   const sunatCodes = ref<Array<ISunatProductCode>>([]);
   const taxes = ref<Array<TaxModel>>([]);
-  // const searchSunatCodes = ref('');
+  const wareHouses = ref<Array<WareHouseModel>>([]);
+  const detailsInventory = ref<Array<IDetailInventoryForm>>([]);
   watch(() => form.value.category_id, (value) => {
     if (value) {
       form.value.sub_category_id = null as any;
@@ -103,6 +105,22 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
       throw e;
     }
   }
+  const getWareHouses = async () => {
+    try {
+      const result = await ProductRelationsService.warehouses();
+      wareHouses.value = result;
+      detailsInventory.value.push({
+        warehouse_id: result[0].id,
+        ware_house: result[0].name,
+        quantity: null as any,
+        minimum_quantity: null as any,
+        maximum_quantity: null as any,
+        completed: false
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
   const refreshForm = () => {
     form.value = {
       category_id: null as any,
@@ -121,6 +139,7 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
       initial_cost: null as any,
       base_price: null as any,
       sunat_product_code_id: null as any,
+
     }
   }
   return {
@@ -129,13 +148,15 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     subCategories,
     brands,
     taxes,
+    sunatCodes,
+    detailsInventory,
     refreshForm,
     getCategories,
     getBrands,
-    sunatCodes,
     searchSunatCodes,
     getTaxes,
     changeBasePrice,
     changeUnitPrice,
+    getWareHouses
   }
 });

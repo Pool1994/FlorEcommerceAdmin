@@ -28,3 +28,11 @@ export interface ProductModel extends IProductForm, IDateAt {
   sub_category: SubCategoryModel;
   brand: BrandModel
 }
+export interface IDetailInventoryForm {
+  warehouse_id: number;
+  ware_house: string;
+  quantity: number;
+  minimum_quantity: number;
+  maximum_quantity: number;
+  completed: boolean;
+}

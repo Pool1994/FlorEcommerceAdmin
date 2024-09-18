@@ -1,6 +1,7 @@
 import { CategoryModel } from "@/@app/inventory/category/ICategoryContracts";
 import { SubCategoryModel } from "@/@app/inventory/subcategory/ISubCategoryContracts";
 import { ISunatProductCode, TaxModel } from "@/@app/shared/ISunatProductCode";
+import { WareHouseModel } from "../../warehouse/IWareHouse";
 
 class ProductRelationsService {
   async categories() {
@@ -42,6 +43,14 @@ class ProductRelationsService {
   async taxes() {
     try {
       const { data } = await $axiosIns.get<TaxModel[]>('/product/relations/taxes');
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
+  async warehouses() {
+    try {
+      const { data } = await $axiosIns.get<WareHouseModel[]>('/product/relations/warehouses');
       return data;
     } catch (e) {
       throw e;
