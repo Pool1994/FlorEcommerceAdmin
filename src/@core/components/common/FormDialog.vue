@@ -32,9 +32,11 @@ const onCancel = () => {
     <DialogCloseBtn @click.prevent="onCancel" />
     <!-- Dialog Content -->
     <VCard :loading="loading" :disabled="loading">
-      <template #title>
+      <v-card-title class="py-3">
         <span class="font-weight-black text-uppercase">{{ title }}</span>
-      </template>
+      </v-card-title>
+      <v-divider></v-divider>
+      <slot name="card-text"></slot>
       <VCardText :class="customClass">
         <slot name="content" />
       </VCardText>

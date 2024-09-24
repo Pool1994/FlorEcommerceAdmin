@@ -75,7 +75,18 @@ export const alphaValidator = (value: unknown) => {
 
   return /^[A-Z]*$/i.test(String(value)) || 'The Alpha field may only contain alphabetic characters'
 }
+export const numberValidator = (value: unknown) => {
+  if (isEmpty(value))
+    return true
 
+  return /^[0-9]*$/i.test(String(value)) || 'The Number field may only contain numeric characters'
+}
+export const decimalValidator = (value: unknown) => {
+  if (isEmpty(value))
+    return true
+
+  return /^[0-9]*\.?[0-9]*$/i.test(String(value)) || 'The Decimal field may only contain numeric characters'
+}
 // 👉 URL Validator
 export const urlValidator = (value: unknown) => {
   if (isEmpty(value))

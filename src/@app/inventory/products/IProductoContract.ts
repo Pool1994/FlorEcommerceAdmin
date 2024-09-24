@@ -21,12 +21,14 @@ export interface IProductForm {
   initial_cost: number;
   base_price: number;
   sunat_product_code_id: number;
+  images: Array<IProductImageForm>;
+  product_type: "NACIONAL" | "IMPORTADO"
 }
 export interface ProductModel extends IProductForm, IDateAt {
   id: number;
   category: CategoryModel;
   sub_category: SubCategoryModel;
-  brand: BrandModel
+  brand: BrandModel;
 }
 export interface IDetailInventoryForm {
   warehouse_id: number;
@@ -35,4 +37,21 @@ export interface IDetailInventoryForm {
   minimum_quantity: number;
   maximum_quantity: number;
   completed: boolean;
+  default?: boolean;
+}
+export interface IContainerImage {
+  image?: File;
+  urlImage?: string;
+  hasImage?: boolean;
+  selected?: boolean;
+  plus: boolean;
+  favorite?: boolean;
+}
+export interface IProductImageForm {
+  image?: File;
+  is_favorite: boolean;
+  image_url: string;
+}
+export interface IProductImageModel extends IProductImageForm {
+  product_id: number;
 }

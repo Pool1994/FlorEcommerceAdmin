@@ -2,9 +2,11 @@ import { BrandModel } from "@/@app/inventory/brand/IBrandContracts";
 import { CategoryModel } from "@/@app/inventory/category/ICategoryContracts";
 import { IDetailInventoryForm, IProductForm } from "@/@app/inventory/products/IProductoContract";
 import ProductRelationsService from "@/@app/inventory/products/services/ProductRelationsService";
+import ProductService from "@/@app/inventory/products/services/ProductService";
 import { SubCategoryModel } from "@/@app/inventory/subcategory/ISubCategoryContracts";
 import { WareHouseModel } from "@/@app/inventory/warehouse/IWareHouse";
 import { ISunatProductCode, TaxModel } from "@/@app/shared/ISunatProductCode";
+import { ModalProps } from "@/@core/contracts/IModal";
 
 export const useProductForm = defineStore('productAddOrEditStore', () => {
   const form = ref<IProductForm>({
@@ -23,7 +25,21 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     photo: '',
     initial_cost: 0,
     base_price: 0,
-    sunat_product_code_id: null as any
+    sunat_product_code_id: null as any,
+    images: [],
+    product_type: "NACIONAL"
+  });
+  const modalCategory = ref<ModalProps<CategoryModel>>({
+    show: false,
+    title: "Nuevo Categoría"
+  });
+  const modalSubCategory = ref<ModalProps<SubCategoryModel>>({
+    show: false,
+    title: "Nueva Subcategoría"
+  });
+  const modalBrand = ref<ModalProps<BrandModel>>({
+    show: false,
+    title: "Nueva Marca"
   });
   const categories = ref<CategoryModel[]>([]);
   const subCategories = ref<SubCategoryModel[]>([]);
@@ -32,12 +48,20 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
   const taxes = ref<Array<TaxModel>>([]);
   const wareHouses = ref<Array<WareHouseModel>>([]);
   const detailsInventory = ref<Array<IDetailInventoryForm>>([]);
+  const typeDetail = ref<"ADD" | "EDIT">("ADD");
+  const almacenPendient = computed(() => wareHouses.value.filter(item => {
+    if (typeDetail.value === "ADD") {
+      return !detailsInventory.value.some(i => i.warehouse_id === item.id);
+    } else {
+      return true;
+    }
+  }))
   watch(() => form.value.category_id, (value) => {
     if (value) {
       form.value.sub_category_id = null as any;
       getSubCategories(value);
     }
-  });
+  })
 
   const changeBasePrice = () => {
     const value = Number(form.value.base_price);
@@ -107,6 +131,7 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
   }
   const getWareHouses = async () => {
     try {
+      detailsInventory.value = [];
       const result = await ProductRelationsService.warehouses();
       wareHouses.value = result;
       detailsInventory.value.push({
@@ -115,8 +140,10 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
         quantity: null as any,
         minimum_quantity: null as any,
         maximum_quantity: null as any,
-        completed: false
+        completed: false,
+        default: true
       });
+
     } catch (e) {
       throw e;
     }
@@ -139,7 +166,62 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
       initial_cost: null as any,
       base_price: null as any,
       sunat_product_code_id: null as any,
+      images: [],
+      product_type: "NACIONAL"
+    }
+  }
+  const openModals = (type: "CATEGORY" | "SUBCATEGORY" | "BRAND") => {
+    switch (type) {
+      case "CATEGORY":
+        modalCategory.value.show = true;
+        break;
+      case "SUBCATEGORY":
+        modalSubCategory.value.show = true;
+        break;
+      case "BRAND":
+        modalBrand.value.show = true;
+        break;
+    }
+  }
+  const reloadRelations = (item: CategoryModel | SubCategoryModel | BrandModel, type: "CATEGORY" | "SUBCATEGORY" | "BRAND") => {
+    switch (type) {
+      case "CATEGORY":
+        categories.value.push(item);
+        form.value.category_id = item.id;
+        break;
+      case "SUBCATEGORY":
+        subCategories.value.push(item as SubCategoryModel);
+        form.value.sub_category_id = item.id;
+        break;
+      case "BRAND":
+        brands.value.push(item);
+        form.value.brand_id = item.id;
+        break;
+    }
+  }
+  const saveProduct = async (id?: number) => {
+    try {
+      let formData = new FormData();
+      for (let key in form.value) {
+        const field = key as keyof IProductForm;
+        if (field === 'images') {
+          form.value.images.forEach((item, index) => {
+            formData.append('images[]', item.image as File);
+            if (item.is_favorite) {
+              formData.append('favoriteIndex', index.toString());
+            }
+          })
+        } else {
+          if (form.value[field]) {
+            formData.append(key, form.value[field] as any);
+          }
+        }
+      }
 
+      const result = await ProductService.register(formData);
+      console.log(result);
+    } catch (ex: any) {
+      notifyError(ex.message);
     }
   }
   return {
@@ -150,6 +232,13 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     taxes,
     sunatCodes,
     detailsInventory,
+    almacenPendient,
+    wareHouses,
+    typeDetail,
+    modalCategory,
+    modalSubCategory,
+    modalBrand,
+    openModals,
     refreshForm,
     getCategories,
     getBrands,
@@ -157,6 +246,8 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     getTaxes,
     changeBasePrice,
     changeUnitPrice,
-    getWareHouses
+    getWareHouses,
+    reloadRelations,
+    saveProduct
   }
 });

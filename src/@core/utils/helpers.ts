@@ -1,3 +1,5 @@
+import { ModalProps } from "../contracts/IModal"
+
 // 👉 IsEmpty
 export const isEmpty = (value: unknown): boolean => {
   if (value === null || value === undefined || value === '')
@@ -28,5 +30,14 @@ export const isToday = (date: Date) => {
     date.getDate() === today.getDate()
     && date.getMonth() === today.getMonth()
     && date.getFullYear() === today.getFullYear()
+  )
+}
+export function isModalProps<T>(modal: any): modal is ModalProps<T> {
+  return (
+    typeof modal === 'object' &&
+    modal !== null &&
+    typeof modal.show === 'boolean' &&
+    typeof modal.title === 'string' &&
+    (modal.item === undefined || typeof modal.item === 'object')
   )
 }

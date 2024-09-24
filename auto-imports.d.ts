@@ -45,6 +45,7 @@ declare global {
   const customRef: typeof import('vue')['customRef']
   const debouncedRef: typeof import('@vueuse/core')['debouncedRef']
   const debouncedWatch: typeof import('@vueuse/core')['debouncedWatch']
+  const decimalValidator: typeof import('./src/@core/utils/validators')['decimalValidator']
   const defineAsyncComponent: typeof import('vue')['defineAsyncComponent']
   const defineComponent: typeof import('vue')['defineComponent']
   const defineLoader: typeof import('vue-router/auto')['defineLoader']
@@ -58,6 +59,7 @@ declare global {
   const formatDate: typeof import('./src/@core/utils/formatters')['formatDate']
   const formatDateFilter: typeof import('./src/@core/utils/filters')['formatDateFilter']
   const formatDateToMonthShort: typeof import('./src/@core/utils/formatters')['formatDateToMonthShort']
+  const formatMoney: typeof import('./src/@core/utils/filters')['formatMoney']
   const getActivePinia: typeof import('pinia')['getActivePinia']
   const getCurrentInstance: typeof import('vue')['getCurrentInstance']
   const getCurrentScope: typeof import('vue')['getCurrentScope']
@@ -71,6 +73,7 @@ declare global {
   const isDefined: typeof import('@vueuse/core')['isDefined']
   const isEmpty: typeof import('./src/@core/utils/helpers')['isEmpty']
   const isEmptyArray: typeof import('./src/@core/utils/helpers')['isEmptyArray']
+  const isModalProps: typeof import('./src/@core/utils/helpers')['isModalProps']
   const isNullOrUndefined: typeof import('./src/@core/utils/helpers')['isNullOrUndefined']
   const isObject: typeof import('./src/@core/utils/helpers')['isObject']
   const isProxy: typeof import('vue')['isProxy']
@@ -108,6 +111,7 @@ declare global {
   const notifyInfo: typeof import('./src/@core/utils/vue-notification')['notifyInfo']
   const notifySuccess: typeof import('./src/@core/utils/vue-notification')['notifySuccess']
   const notifyWarning: typeof import('./src/@core/utils/vue-notification')['notifyWarning']
+  const numberValidator: typeof import('./src/@core/utils/validators')['numberValidator']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
   const onBeforeRouteLeave: typeof import('vue-router/auto')['onBeforeRouteLeave']
@@ -432,6 +436,7 @@ declare module 'vue' {
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly debouncedRef: UnwrapRef<typeof import('@vueuse/core')['debouncedRef']>
     readonly debouncedWatch: UnwrapRef<typeof import('@vueuse/core')['debouncedWatch']>
+    readonly decimalValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['decimalValidator']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly definePage: UnwrapRef<typeof import('unplugin-vue-router/runtime')['definePage']>
@@ -444,6 +449,7 @@ declare module 'vue' {
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters')['formatDate']>
     readonly formatDateFilter: UnwrapRef<typeof import('./src/@core/utils/filters')['formatDateFilter']>
     readonly formatDateToMonthShort: UnwrapRef<typeof import('./src/@core/utils/formatters')['formatDateToMonthShort']>
+    readonly formatMoney: UnwrapRef<typeof import('./src/@core/utils/filters')['formatMoney']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -456,6 +462,7 @@ declare module 'vue' {
     readonly isDefined: UnwrapRef<typeof import('@vueuse/core')['isDefined']>
     readonly isEmpty: UnwrapRef<typeof import('./src/@core/utils/helpers')['isEmpty']>
     readonly isEmptyArray: UnwrapRef<typeof import('./src/@core/utils/helpers')['isEmptyArray']>
+    readonly isModalProps: UnwrapRef<typeof import('./src/@core/utils/helpers')['isModalProps']>
     readonly isNullOrUndefined: UnwrapRef<typeof import('./src/@core/utils/helpers')['isNullOrUndefined']>
     readonly isObject: UnwrapRef<typeof import('./src/@core/utils/helpers')['isObject']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
@@ -493,6 +500,7 @@ declare module 'vue' {
     readonly notifyInfo: UnwrapRef<typeof import('./src/@core/utils/vue-notification')['notifyInfo']>
     readonly notifySuccess: UnwrapRef<typeof import('./src/@core/utils/vue-notification')['notifySuccess']>
     readonly notifyWarning: UnwrapRef<typeof import('./src/@core/utils/vue-notification')['notifyWarning']>
+    readonly numberValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['numberValidator']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
     readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
     readonly onBeforeRouteLeave: UnwrapRef<typeof import('vue-router/auto')['onBeforeRouteLeave']>

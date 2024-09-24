@@ -31,4 +31,16 @@ export class ApiGeneral {
       throw e;
     }
   }
+  async postMultiPart<TReturn, TParams>(url: string, params: TParams) {
+    try {
+      const { data } = await $axiosIns.post<TReturn>(url, params, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return data;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

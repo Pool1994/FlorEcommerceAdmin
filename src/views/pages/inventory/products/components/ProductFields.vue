@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import BrandAddOrEdit from "../../brands/modal/BrandAddOrEdit.vue";
+import CategoryAddOrEdit from "../../category/modal/CategoryAddOrEdit.vue";
+import SubCategoryAddOrEdit from "../../subcategory/modal/SubCategoryAddOrEdit.vue";
 import { useProductForm } from "../store/productAddOrEditStore";
 
 const useStore = useProductForm();
 const searchSunatCodes = ref("");
-
 onBeforeMount(() => {
   useStore.refreshForm();
 });
@@ -22,12 +24,18 @@ onMounted(async () => {
     <v-divider></v-divider>
     <v-card-text>
       <v-row>
-        <v-col cols="12">
+        <v-col cols="12" md="9">
           <AppTextField
             label="Nombre"
             :rules="[requiredValidator]"
             v-model="useStore.form.name"
           ></AppTextField>
+        </v-col>
+        <v-col cols="12" md="3">
+          <VRadioGroup v-model="useStore.form.product_type" inline label="Tipo">
+            <VRadio label="Nacional" value="NACIONAL" />
+            <VRadio label="Importado" value="IMPORTADO" />
+          </VRadioGroup>
         </v-col>
       </v-row>
       <v-row>
@@ -39,7 +47,13 @@ onMounted(async () => {
             item-value="id"
             :rules="[requiredValidator]"
             v-model="useStore.form.category_id"
-          ></AppAutocomplete>
+          >
+            <template #append>
+              <v-btn @click="useStore.openModals('CATEGORY')">
+                <v-icon icon="tabler-plus"></v-icon>
+              </v-btn>
+            </template>
+          </AppAutocomplete>
         </v-col>
         <v-col cols="12" md="4">
           <AppAutocomplete
@@ -49,7 +63,13 @@ onMounted(async () => {
             item-value="id"
             :rules="[requiredValidator]"
             v-model="useStore.form.sub_category_id"
-          ></AppAutocomplete>
+          >
+            <template #append>
+              <v-btn @click="useStore.openModals('SUBCATEGORY')">
+                <v-icon icon="tabler-plus"></v-icon>
+              </v-btn>
+            </template>
+          </AppAutocomplete>
         </v-col>
         <v-col cols="12" md="4">
           <AppAutocomplete
@@ -59,7 +79,13 @@ onMounted(async () => {
             item-value="id"
             :rules="[requiredValidator]"
             v-model="useStore.form.brand_id"
-          ></AppAutocomplete>
+          >
+            <template #append>
+              <v-btn @click="useStore.openModals('BRAND')">
+                <v-icon icon="tabler-plus"></v-icon>
+              </v-btn>
+            </template>
+          </AppAutocomplete>
         </v-col>
       </v-row>
       <v-row>
@@ -68,7 +94,8 @@ onMounted(async () => {
             label="Codigo Barra"
             :rules="[requiredValidator]"
             v-model="useStore.form.barcode"
-          ></AppTextField>
+          >
+          </AppTextField>
         </v-col>
         <v-col cols="12" md="8">
           <AppAutocomplete
@@ -84,7 +111,12 @@ onMounted(async () => {
       </v-row>
       <v-row>
         <v-col cols="12">
-          <AppTextarea label="Descripción" rows="3" no-resize></AppTextarea>
+          <AppTextarea
+            label="Descripción"
+            rows="3"
+            no-resize
+            v-model="useStore.form.description"
+          ></AppTextarea>
         </v-col>
       </v-row>
     </v-card-text>
@@ -106,6 +138,7 @@ onMounted(async () => {
             v-model="useStore.form.base_price"
             placeholder="0.00"
             @keyup="useStore.changeBasePrice"
+            :rules="[requiredValidator]"
           ></AppTextField>
         </v-col>
         <v-col cols="12" md="1" class="d-flex justify-center align-center pt-8">
@@ -130,6 +163,7 @@ onMounted(async () => {
             label="Precio Total"
             placeholder="0.00"
             v-model="useStore.form.unit_price"
+            :rules="[requiredValidator]"
             @keyup="useStore.changeUnitPrice"
           ></AppTextField>
         </v-col>
@@ -140,50 +174,36 @@ onMounted(async () => {
             label="Costo Inicial"
             placeholder="0.00"
             type="number"
+            :rules="[requiredValidator]"
+            v-model="useStore.form.initial_cost"
           ></AppTextField>
         </v-col>
       </v-row>
     </v-card-text>
   </v-card>
   <div class="py-2"></div>
-  <v-card>
-    <v-card-title>
-      <h5 class="text-uppercase">Detalle de inventario</h5>
-      <h5 class="text-secondary">
-        Distribuye y controla las cantidades de tus productos en diferentes lugares
-      </h5>
-    </v-card-title>
-    <v-divider></v-divider>
-    <v-card-text>
-      <div
-        v-for="(item, index) in useStore.detailsInventory"
-        :key="index"
-        class="container-detail-inventory"
-      >
-        <div class="detail-icon">
-          <v-icon icon="tabler-stack-2" size="25"></v-icon>
-        </div>
-        <div class="detail-container">
-          <p class="item">{{ item.ware_house }}</p>
-          <p class="item totales">
-            <template v-if="item.completed">
-              {{ item.quantity }} {{ item.minimum_quantity }} -
-              {{ item.maximum_quantity }}
-            </template>
-            <template v-else> Agrega aquí la cantidad inicial de tu producto </template>
-          </p>
-        </div>
-        <div class="detail-actions">
-          <v-icon size="30" icon="tabler-dots-vertical"></v-icon>
-        </div>
-      </div>
-    </v-card-text>
-  </v-card>
+
+  <CategoryAddOrEdit
+    v-model:modal="useStore.modalCategory"
+    v-if="useStore.modalCategory.show"
+    @reload="(item) => useStore.reloadRelations(item, 'CATEGORY')"
+  />
+  <SubCategoryAddOrEdit
+    v-if="useStore.modalSubCategory.show"
+    v-model:modal="useStore.modalSubCategory"
+    @reload="(item) => useStore.reloadRelations(item, 'SUBCATEGORY')"
+  />
+  <BrandAddOrEdit
+    v-model:modal="useStore.modalBrand"
+    v-if="useStore.modalBrand.show"
+    @reload="(item) => useStore.reloadRelations(item, 'BRAND')"
+  />
 </template>
 <style lang="scss">
 .container-detail-inventory {
   padding: 10px 5px;
   display: flex;
+
   .detail-icon {
     width: 60px;
     height: 60px;
@@ -194,13 +214,16 @@ onMounted(async () => {
     align-items: center;
     border: white solid 1px;
   }
+
   > .detail-container {
     flex-grow: 2;
     padding: 5px 10px;
+
     p.item {
       font-weight: bold;
       margin: 0;
     }
+
     p.totales {
       font-size: 0.8rem;
     }
