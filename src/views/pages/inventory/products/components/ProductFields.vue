@@ -3,18 +3,17 @@ import BrandAddOrEdit from "../../brands/modal/BrandAddOrEdit.vue";
 import CategoryAddOrEdit from "../../category/modal/CategoryAddOrEdit.vue";
 import SubCategoryAddOrEdit from "../../subcategory/modal/SubCategoryAddOrEdit.vue";
 import { useProductForm } from "../store/productAddOrEditStore";
+import DetailsPresentations from "./DetailsPresentations.vue";
 
 const useStore = useProductForm();
 const searchSunatCodes = ref("");
+const $props = defineProps<{
+  edit?:boolean
+}>();
 onBeforeMount(() => {
   useStore.refreshForm();
 });
-onMounted(async () => {
-  await useStore.getCategories();
-  await useStore.getBrands();
-  await useStore.getTaxes();
-  await useStore.getWareHouses();
-});
+onMounted(async () => {});
 </script>
 <template>
   <v-card>
@@ -119,10 +118,20 @@ onMounted(async () => {
           ></AppTextarea>
         </v-col>
       </v-row>
+      <v-row v-if="!(!!edit)">
+        <v-col cols="12" md="12">
+          <VCheckbox
+            v-model="useStore.form.requires_pricing"
+            label="Este producto requiere que se ingresen los precios"
+            false-value="NO"
+            true-value="SI"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-card>
   <div class="py-2"></div>
-  <v-card>
+  <v-card v-if="useStore.form.requires_pricing === 'SI'">
     <v-card-title>
       <h5 class="text-uppercase">Precio</h5>
       <h5 class="text-secondary">
@@ -182,7 +191,12 @@ onMounted(async () => {
     </v-card-text>
   </v-card>
   <div class="py-2"></div>
-
+  <DetailsPresentations
+    :edit="edit"
+    v-if="useStore.form.requires_pricing === 'NO'"
+    @details="(detail) => (useStore.form.presentations = detail)"
+    
+  />
   <CategoryAddOrEdit
     v-model:modal="useStore.modalCategory"
     v-if="useStore.modalCategory.show"

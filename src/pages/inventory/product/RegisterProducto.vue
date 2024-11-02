@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { router } from "@/plugins/1.router";
 import ImageProduct from "@/views/pages/inventory/products/components/ImageProduct.vue";
 import ProductFields from "@/views/pages/inventory/products/components/ProductFields.vue";
 import { useProductForm } from "@/views/pages/inventory/products/store/productAddOrEditStore";
@@ -10,8 +11,9 @@ const saveProduct = async () => {
     const myForm = await formProduct.value?.validate();
     if (!myForm?.valid) throw new Error("Form invalid");
     await useStore.saveProduct();
+    router.push({ name: "inventory-product" });
   } catch (ex: any) {
-    notifyError(ex.message);
+    errorHttp(ex.message);
   }
 };
 onBeforeUnmount(() => {
@@ -19,6 +21,12 @@ onBeforeUnmount(() => {
 });
 onBeforeMount(() => {
   localStorage.removeItem("gallery-images");
+});
+onMounted(async () => {
+  await useStore.getCategories();
+  await useStore.getBrands();
+  await useStore.getTaxes();
+  await useStore.getWareHouses();
 });
 </script>
 <template>

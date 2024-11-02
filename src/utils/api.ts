@@ -23,6 +23,9 @@ export const $api = ofetch.create({
 
 export const $axiosIns = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  headers: {
+    'Content-Type': 'application/json',
+  }
 });
 
 // / ℹ️ Add request interceptor to send the authorization header on each subsequent request after login

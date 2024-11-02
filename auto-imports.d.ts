@@ -55,6 +55,7 @@ declare global {
   const eagerComputed: typeof import('@vueuse/core')['eagerComputed']
   const effectScope: typeof import('vue')['effectScope']
   const emailValidator: typeof import('./src/@core/utils/validators')['emailValidator']
+  const errorHttp: typeof import('./src/@core/utils/vue-notification')['errorHttp']
   const extendRef: typeof import('@vueuse/core')['extendRef']
   const formatDate: typeof import('./src/@core/utils/formatters')['formatDate']
   const formatDateFilter: typeof import('./src/@core/utils/filters')['formatDateFilter']
@@ -445,6 +446,7 @@ declare module 'vue' {
     readonly eagerComputed: UnwrapRef<typeof import('@vueuse/core')['eagerComputed']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
     readonly emailValidator: UnwrapRef<typeof import('./src/@core/utils/validators')['emailValidator']>
+    readonly errorHttp: UnwrapRef<typeof import('./src/@core/utils/vue-notification')['errorHttp']>
     readonly extendRef: UnwrapRef<typeof import('@vueuse/core')['extendRef']>
     readonly formatDate: UnwrapRef<typeof import('./src/@core/utils/formatters')['formatDate']>
     readonly formatDateFilter: UnwrapRef<typeof import('./src/@core/utils/filters')['formatDateFilter']>

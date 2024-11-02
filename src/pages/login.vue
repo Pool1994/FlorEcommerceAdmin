@@ -133,7 +133,7 @@ const onSubmit = () => {
       >
         <VCardText>
           <h4 class="text-h4 mb-1">
-            Welcome to <span class="text-capitalize"> {{ themeConfig.app.title }} </span>! 👋🏻
+            Bienvenido a <span class="text-capitalize"> {{ themeConfig.app.title }} </span>! 👋🏻
           </h4>
           <p class="mb-0">
             Please sign-in to your account and start the adventure

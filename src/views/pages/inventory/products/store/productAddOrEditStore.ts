@@ -1,5 +1,6 @@
 import { BrandModel } from "@/@app/inventory/brand/IBrandContracts";
 import { CategoryModel } from "@/@app/inventory/category/ICategoryContracts";
+import { PackagingModel } from "@/@app/inventory/packaging/IPackagingContracts";
 import { IDetailInventoryForm, IProductForm } from "@/@app/inventory/products/IProductoContract";
 import ProductRelationsService from "@/@app/inventory/products/services/ProductRelationsService";
 import ProductService from "@/@app/inventory/products/services/ProductService";
@@ -9,6 +10,8 @@ import { ISunatProductCode, TaxModel } from "@/@app/shared/ISunatProductCode";
 import { ModalProps } from "@/@core/contracts/IModal";
 
 export const useProductForm = defineStore('productAddOrEditStore', () => {
+  const currentEdit = ref(false);
+  const formEdit = ref<IProductForm>();
   const form = ref<IProductForm>({
     category_id: null as any,
     sub_category_id: null as any,
@@ -17,17 +20,21 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     description: '',
     unit_price: null as any,
     use_inventory: 'SI',
-    tax_id: null as any,
+    tax_id: 1,
     stock: 0,
     sku: '',
     barcode: '',
-    minumun_stock: 0,
+    minumun_stock: null as any,
+    maximun_stock: null as any,
     photo: '',
     initial_cost: 0,
     base_price: 0,
     sunat_product_code_id: null as any,
     images: [],
-    product_type: "NACIONAL"
+    product_type: "NACIONAL",
+    invoicing: "SI",
+    requires_pricing: "NO",
+    presentations: []
   });
   const modalCategory = ref<ModalProps<CategoryModel>>({
     show: false,
@@ -48,21 +55,43 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
   const taxes = ref<Array<TaxModel>>([]);
   const wareHouses = ref<Array<WareHouseModel>>([]);
   const detailsInventory = ref<Array<IDetailInventoryForm>>([]);
+  const packagings = ref<Array<PackagingModel>>([]);
   const typeDetail = ref<"ADD" | "EDIT">("ADD");
+
+  /** COMPUTED */
   const almacenPendient = computed(() => wareHouses.value.filter(item => {
     if (typeDetail.value === "ADD") {
       return !detailsInventory.value.some(i => i.warehouse_id === item.id);
     } else {
       return true;
     }
-  }))
-  watch(() => form.value.category_id, (value) => {
+  }));
+
+
+  /** FIN COMPUTED */
+
+  /** WATCH */
+  watch(() => form.value.category_id, async (value) => {
     if (value) {
       form.value.sub_category_id = null as any;
-      getSubCategories(value);
+      await getSubCategories(value);
+      if (formEdit.value?.category_id === value) {
+        console.log({ value: formEdit.value });
+        form.value.sub_category_id = formEdit.value?.sub_category_id;
+      }
     }
-  })
+  });
+  watch(() => form.value.requires_pricing, (value) => {
+    if (value === "SI") {
+      form.value.base_price = null as any;
+      form.value.unit_price = null as any;
+      form.value.tax_id = 1;
+      form.value.initial_cost = null as any;
+    }
+  });
+  /** FIN WATCH */
 
+  /** METHODS */
   const changeBasePrice = () => {
     const value = Number(form.value.base_price);
     if (value) {
@@ -148,6 +177,14 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
       throw e;
     }
   }
+  const getPackagings = async () => {
+    try {
+      const result = await ProductRelationsService.packagings();
+      packagings.value = result;
+    } catch (e) {
+      throw e;
+    }
+  }
   const refreshForm = () => {
     form.value = {
       category_id: null as any,
@@ -167,7 +204,12 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
       base_price: null as any,
       sunat_product_code_id: null as any,
       images: [],
-      product_type: "NACIONAL"
+      product_type: "NACIONAL",
+      invoicing: "SI",
+      maximun_stock: null as any,
+      requires_pricing: "NO",
+      presentations: []
+
     }
   }
   const openModals = (type: "CATEGORY" | "SUBCATEGORY" | "BRAND") => {
@@ -211,21 +253,46 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
               formData.append('favoriteIndex', index.toString());
             }
           })
+        } else if (field === 'presentations') {
+          formData.append('detailsPresentation', JSON.stringify(form.value.presentations));
         } else {
           if (form.value[field]) {
             formData.append(key, form.value[field] as any);
           }
         }
       }
+      let result;
+      if (id) {
+        result = await ProductService.update(formData, id);
 
-      const result = await ProductService.register(formData);
-      console.log(result);
+      } else {
+        result = await ProductService.register(formData);
+      }
+      notifySuccess(result.message);
     } catch (ex: any) {
-      notifyError(ex.message);
+      errorHttp(ex);
+      throw ex;
     }
   }
+  const edit = async (id: number) => {
+    try {
+      await getCategories();
+      await getBrands();
+      await getTaxes();
+      await getWareHouses();
+      const result = await ProductService.edit(id);
+      formEdit.value = JSON.parse(JSON.stringify(result));
+      form.value = result;
+      await searchSunatCodes(result.sunat_product_code.code);
+    } catch (ex: any) {
+      errorHttp(ex);
+    }
+  }
+  /** END METHODS */
+
   return {
     form,
+    formEdit,
     categories,
     subCategories,
     brands,
@@ -238,6 +305,7 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     modalCategory,
     modalSubCategory,
     modalBrand,
+    packagings,
     openModals,
     refreshForm,
     getCategories,
@@ -248,6 +316,8 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     changeUnitPrice,
     getWareHouses,
     reloadRelations,
-    saveProduct
+    saveProduct,
+    getPackagings,
+    edit
   }
 });

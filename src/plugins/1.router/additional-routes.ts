@@ -1,5 +1,5 @@
-import EditProducto from '@/pages/inventory/product/edit/EditProducto.vue'
-import RegisterProducto from '@/pages/inventory/product/register/RegisterProducto.vue'
+import EditProducto from '@/pages/inventory/product/EditProducto.vue'
+import RegisterProducto from '@/pages/inventory/product/RegisterProducto.vue'
 import type { RouteRecordRaw } from 'vue-router/auto'
 // 👉 Redirects
 export const redirects: RouteRecordRaw[] = [
@@ -29,7 +29,7 @@ export const routes: RouteRecordRaw[] = [
     children: [
       {
         path: ':id/edit',
-        name: 'inventory-product-edit',
+        name: 'product-edit',
         component: EditProducto,
       },
       {

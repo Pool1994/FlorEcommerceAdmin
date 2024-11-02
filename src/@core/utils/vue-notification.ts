@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { useToast } from "vue-toastification";
 const $toast = useToast();
 export const notifySuccess = (message: string) => {
@@ -11,4 +12,7 @@ export const notifyInfo = (message: string) => {
 }
 export const notifyWarning = (message: string) => {
   $toast.warning(message);
+}
+export const errorHttp = (_axios: AxiosError) => {
+  notifyError(_axios.response?.data as string);
 }

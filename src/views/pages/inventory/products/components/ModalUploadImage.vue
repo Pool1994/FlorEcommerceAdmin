@@ -83,48 +83,60 @@ const uploadImage = async (event: Event) => {
     const target = event.target as HTMLInputElement;
     if (!target.files) return;
     const images = Array.from(target.files);
+    console.log(images);
     images.forEach((file, index) => {
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const url = e.target?.result as string;
-        const blob = await urlToBlob(url);
-        /** buscamos imagenes */
-        const emptyIndex = listImages.value.findIndex((item) => !item.hasImage);
-        if (emptyIndex !== -1) {
-          listImages.value[emptyIndex].urlImage = URL.createObjectURL(blob);
-          listImages.value[emptyIndex].hasImage = true;
-          listImages.value[emptyIndex].plus = false;
-          listImages.value[emptyIndex].image = file;
-
-          const nextIndex = emptyIndex + 1;
-          if (nextIndex < listImages.value.length) {
-            listImages.value[nextIndex].plus = true;
-          } else {
-            listImages.value.push({
-              plus: true,
-            });
-          }
-          listImages.value.forEach((item, index) => {
-            if (index !== nextIndex) {
-              item.plus = false;
-            }
-          });
-
-          /** seleccionamos una imagen */
-          const totalSelected = listImages.value.filter((item) => item.selected).length;
-          if (totalSelected === 0) {
-            listImages.value[0].selected = true;
-            listImages.value[0].favorite = true;
-            imageSelectedIndex.value = 0;
-          }
-        }
-      };
-      reader.readAsDataURL(file);
+      setImagesFile(file);
     });
+    selectedImageByDefault();
   } catch (e: any) {
     notifyError(e.message);
   }
 };
+const setImagesFile = (file: File, is_favorite = false) => {
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const url = e.target?.result as string;
+    const blob = await urlToBlob(url);
+    /** buscamos imagenes */
+    const emptyIndex = listImages.value.findIndex((item) => !item.hasImage);
+    if (emptyIndex !== -1) {
+      listImages.value[emptyIndex].urlImage = URL.createObjectURL(blob);
+      listImages.value[emptyIndex].hasImage = true;
+      listImages.value[emptyIndex].plus = false;
+      listImages.value[emptyIndex].image = file;
+      listImages.value[emptyIndex].favorite = is_favorite;
+      listImages.value[emptyIndex].selected = is_favorite;
+
+      const nextIndex = emptyIndex + 1;
+      if (nextIndex < listImages.value.length) {
+        listImages.value[nextIndex].plus = true;
+      } else {
+        listImages.value.push({
+          plus: true,
+        });
+      }
+      listImages.value.forEach((item, index) => {
+        if (index !== nextIndex) {
+          item.plus = false;
+        }
+      });
+    }
+  };
+  reader.readAsDataURL(file);
+}
+const selectedImageByDefault = () => {
+  /** seleccionamos una imagen */
+  if (listImages.value.length > 0) {
+    const totalSelected = listImages.value.filter((item) => item.selected).length;
+    if (totalSelected === 0) {
+      const index = 0;
+      listImages.value[index].selected = true;
+      listImages.value[index].favorite = true;
+      imageSelectedIndex.value = index;
+    }
+  }
+
+}
 const updateImages = () => {
   listImages.value = listImages.value.map((item) => ({
     ...item,
@@ -177,18 +189,37 @@ const setClass = (item: IContainerImage) => {
   }
   return className;
 };
+
+watch(
+  () => store.formEdit?.images,
+  (value) => {
+    if (value && value.length > 0) {
+      let storageImages =  localStorage.getItem("gallery-images");
+      if(storageImages) return;
+      value.forEach(async (item, index) => {
+        const { data } = await $axiosIns.post(
+          `/download/product-image`,
+          {
+            path: item.image_url,
+          },
+          {
+            responseType: "blob",
+          }
+        );
+        const file = new File([data], `image${index}`, { type: "image/png" });
+        setImagesFile(file, item.is_favorite);
+      });
+      selectedImageByDefault();
+    }
+  },
+  { deep: true, immediate: true }
+);
 onMounted(() => {
   setDefault();
 });
 </script>
 <template>
-  <FormDialog
-    v-model:show="modal.show"
-    :title="modal.title"
-    @close="closeModal"
-    :width="600"
-    class="main-gallery"
-  >
+  <FormDialog v-model:show="modal.show" :title="modal.title" @close="closeModal" :width="600" class="main-gallery">
     <template #card-text>
       <v-card-text class="py-2">
         <div class="upload--container">
@@ -216,27 +247,14 @@ onMounted(() => {
         <div class="image">
           <template v-if="imageSelected">
             <div class="image-options">
-              <v-btn
-                size="small"
-                variant="elevated"
-                color="secondary"
-                @click="galleryActions('FAVORITE', imageSelected, imageSelectedIndex)"
-              >
-                <v-icon
-                  :icon="imageSelected.favorite ? 'tabler-star-filled' : 'tabler-star'"
-                  size="20"
-                  color="success"
-                ></v-icon>
+              <v-btn size="small" variant="elevated" color="secondary"
+                @click="galleryActions('FAVORITE', imageSelected, imageSelectedIndex)">
+                <v-icon :icon="imageSelected.favorite ? 'tabler-star-filled' : 'tabler-star'" size="20"
+                  color="success"></v-icon>
                 <span class="d-block">Favorito</span>
               </v-btn>
-              <v-btn
-                size="small"
-                v-bind="props"
-                variant="elevated"
-                class="py-1"
-                color="secondary"
-                @click="galleryActions('DELETE', imageSelected, imageSelectedIndex)"
-              >
+              <v-btn size="small" v-bind="props" variant="elevated" class="py-1" color="secondary"
+                @click="galleryActions('DELETE', imageSelected, imageSelectedIndex)">
                 <v-icon icon="tabler-trash" size="18"></v-icon>
               </v-btn>
             </div>
@@ -244,20 +262,10 @@ onMounted(() => {
           </template>
           <v-icon icon="tabler-camera-plus" size="65" v-if="!imageSelected"></v-icon>
         </div>
-        <div
-          class="images-list mt-2"
-          :style="{ gridTemplateColumns: `repeat(${listImages.length}, 1fr)` }"
-        >
+        <div class="images-list mt-2" :style="{ gridTemplateColumns: `repeat(${listImages.length}, 1fr)` }">
           <template v-for="(item, index) in listImages" :key="index">
-            <div
-              class="image-container"
-              :class="setClass(item)"
-              @click="galleryActions('SELECT', item, index)"
-            >
-              <div
-                class="background-container"
-                :style="{ backgroundImage: `url(${item.urlImage})` }"
-              ></div>
+            <div class="image-container" :class="setClass(item)" @click="galleryActions('SELECT', item, index)">
+              <div class="background-container" :style="{ backgroundImage: `url(${item.urlImage})` }"></div>
               <template v-if="item.plus">
                 <v-icon icon="tabler-plus" size="25"></v-icon>
               </template>
@@ -270,24 +278,20 @@ onMounted(() => {
       <v-btn @click="saveImages">Guardar</v-btn>
     </template>
   </FormDialog>
-  <input
-    type="file"
-    id="upload--img"
-    class="d-none"
-    accept="image/png, image/jpeg, image/webp"
-    @change="uploadImage"
-    multiple
-  />
+  <input type="file" id="upload--img" class="d-none" accept="image/png, image/jpeg, image/webp" @change="uploadImage"
+    multiple />
 </template>
 <style lang="scss" scoped>
 .main-gallery {
   .upload--container {
     display: flex;
+
     .item:nth-child(2) {
       flex-grow: 2;
       padding: 0px 10px;
     }
   }
+
   .container--gallery {
     .image {
       position: relative;
@@ -299,11 +303,13 @@ onMounted(() => {
       align-items: center;
       background-size: contain;
       background-repeat: no-repeat;
+
       img {
         max-width: 27.625rem;
         max-height: 15.25rem;
         width: auto;
       }
+
       .image-options {
         position: absolute;
         display: -webkit-box;
@@ -314,17 +320,20 @@ onMounted(() => {
         align-items: center;
         top: 10px;
         right: 10px;
+
         .v-btn {
           margin-inline-end: 10px;
         }
       }
     }
+
     .images-list {
       display: grid;
       overflow-y: auto;
       grid-template-columns: repeat(7, 1fr);
       grid-gap: 5px;
       width: 100%;
+
       .image-container {
         position: relative;
         display: flex;
@@ -336,6 +345,7 @@ onMounted(() => {
         border-radius: 0.25rem;
         border: 3px solid transparent;
         background-color: #1d1f2e1c;
+
         .background-container {
           position: absolute;
           background-repeat: no-repeat;
@@ -346,18 +356,22 @@ onMounted(() => {
           height: calc(100% - 0.1875rem);
         }
       }
+
       .image-container.plus {
         background: transparent;
         border: 2px solid #ccc;
       }
+
       .image-container.plus:hover {
         border-color: #00b19e;
         color: #00b19e;
         cursor: pointer;
       }
+
       .image-container.has-image {
         cursor: pointer;
       }
+
       .image-container.selected {
         border: 3px solid #e6e6e6;
       }
