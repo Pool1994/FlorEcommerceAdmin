@@ -20,7 +20,7 @@ export const $api = ofetch.create({
   },
 
 })
-
+export const baseURL = import.meta.env.VITE_API_BASE_URL || '/api';
 export const $axiosIns = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {

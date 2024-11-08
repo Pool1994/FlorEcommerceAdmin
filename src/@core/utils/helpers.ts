@@ -1,4 +1,12 @@
 import { ModalProps } from "../contracts/IModal"
+export enum MimeType {
+  JPEG = 'image/jpeg',
+  PNG = 'image/png',
+  PDF = 'application/pdf',
+  PLAIN = 'text/plain',
+  MPEG = 'audio/mpeg',
+  MP4 = 'video/mp4'
+}
 
 // 👉 IsEmpty
 export const isEmpty = (value: unknown): boolean => {
@@ -41,3 +49,13 @@ export function isModalProps<T>(modal: any): modal is ModalProps<T> {
     (modal.item === undefined || typeof modal.item === 'object')
   )
 }
+export async function urlToFile(blobUrl: string, fileName: string, mimeType: MimeType, init?: RequestInit): Promise<File> {
+  // Fetch the Blob from the URL
+  const response = await fetch(blobUrl, init);
+  const blob = await response.blob();
+
+  // Create a new File from the Blob
+  const file = new File([blob], fileName, { type: mimeType });
+  return file;
+}
+

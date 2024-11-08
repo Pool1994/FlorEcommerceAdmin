@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { IContainerImage } from "@/@app/inventory/products/IProductoContract";
 import { EmitEvents, IModal } from "@/@core/contracts/IModal";
+import { MimeType } from "@/@core/utils/helpers";
 import { useProductForm } from "../store/productAddOrEditStore";
 type typeActions = "ADD" | "SELECT" | "DELETE" | "FAVORITE";
 const props = defineProps<IModal<string>>();
@@ -123,7 +124,7 @@ const setImagesFile = (file: File, is_favorite = false) => {
     }
   };
   reader.readAsDataURL(file);
-}
+};
 const selectedImageByDefault = () => {
   /** seleccionamos una imagen */
   if (listImages.value.length > 0) {
@@ -135,8 +136,7 @@ const selectedImageByDefault = () => {
       imageSelectedIndex.value = index;
     }
   }
-
-}
+};
 const updateImages = () => {
   listImages.value = listImages.value.map((item) => ({
     ...item,
@@ -162,12 +162,24 @@ const urlToBlob = async (url: string) => {
   const blob = await response.blob();
   return blob;
 };
-const setDefault = () => {
+const setDefault = async () => {
   if (localStorage.getItem("gallery-images")) {
     const images = JSON.parse(
       localStorage.getItem("gallery-images") as string
     ) as Array<IContainerImage>;
-    listImages.value = images.map((item) => ({ ...item, selected: item.favorite }));
+    // listImages.value = images.map((item) => ({ ...item, selected: item.favorite }));
+    images.forEach(async (item, index) => {
+      if (item.urlImage) {
+        const file = await urlToFile(
+          item.urlImage as string,
+          `image${index}`,
+          MimeType.PNG
+        );
+        item.image = file;
+      }
+      item.selected = !!item.favorite;
+    });
+    listImages.value = images;
   } else {
     for (let i = 0; i < 7; i++) {
       listImages.value.push({
@@ -194,8 +206,8 @@ watch(
   () => store.formEdit?.images,
   (value) => {
     if (value && value.length > 0) {
-      let storageImages =  localStorage.getItem("gallery-images");
-      if(storageImages) return;
+      let storageImages = localStorage.getItem("gallery-images");
+      if (storageImages) return;
       value.forEach(async (item, index) => {
         const { data } = await $axiosIns.post(
           `/download/product-image`,
@@ -219,7 +231,13 @@ onMounted(() => {
 });
 </script>
 <template>
-  <FormDialog v-model:show="modal.show" :title="modal.title" @close="closeModal" :width="600" class="main-gallery">
+  <FormDialog
+    v-model:show="modal.show"
+    :title="modal.title"
+    @close="closeModal"
+    :width="600"
+    class="main-gallery"
+  >
     <template #card-text>
       <v-card-text class="py-2">
         <div class="upload--container">
@@ -247,14 +265,27 @@ onMounted(() => {
         <div class="image">
           <template v-if="imageSelected">
             <div class="image-options">
-              <v-btn size="small" variant="elevated" color="secondary"
-                @click="galleryActions('FAVORITE', imageSelected, imageSelectedIndex)">
-                <v-icon :icon="imageSelected.favorite ? 'tabler-star-filled' : 'tabler-star'" size="20"
-                  color="success"></v-icon>
+              <v-btn
+                size="small"
+                variant="elevated"
+                color="secondary"
+                @click="galleryActions('FAVORITE', imageSelected, imageSelectedIndex)"
+              >
+                <v-icon
+                  :icon="imageSelected.favorite ? 'tabler-star-filled' : 'tabler-star'"
+                  size="20"
+                  color="success"
+                ></v-icon>
                 <span class="d-block">Favorito</span>
               </v-btn>
-              <v-btn size="small" v-bind="props" variant="elevated" class="py-1" color="secondary"
-                @click="galleryActions('DELETE', imageSelected, imageSelectedIndex)">
+              <v-btn
+                size="small"
+                v-bind="props"
+                variant="elevated"
+                class="py-1"
+                color="secondary"
+                @click="galleryActions('DELETE', imageSelected, imageSelectedIndex)"
+              >
                 <v-icon icon="tabler-trash" size="18"></v-icon>
               </v-btn>
             </div>
@@ -262,10 +293,20 @@ onMounted(() => {
           </template>
           <v-icon icon="tabler-camera-plus" size="65" v-if="!imageSelected"></v-icon>
         </div>
-        <div class="images-list mt-2" :style="{ gridTemplateColumns: `repeat(${listImages.length}, 1fr)` }">
+        <div
+          class="images-list mt-2"
+          :style="{ gridTemplateColumns: `repeat(${listImages.length}, 1fr)` }"
+        >
           <template v-for="(item, index) in listImages" :key="index">
-            <div class="image-container" :class="setClass(item)" @click="galleryActions('SELECT', item, index)">
-              <div class="background-container" :style="{ backgroundImage: `url(${item.urlImage})` }"></div>
+            <div
+              class="image-container"
+              :class="setClass(item)"
+              @click="galleryActions('SELECT', item, index)"
+            >
+              <div
+                class="background-container"
+                :style="{ backgroundImage: `url(${item.urlImage})` }"
+              ></div>
               <template v-if="item.plus">
                 <v-icon icon="tabler-plus" size="25"></v-icon>
               </template>
@@ -278,8 +319,14 @@ onMounted(() => {
       <v-btn @click="saveImages">Guardar</v-btn>
     </template>
   </FormDialog>
-  <input type="file" id="upload--img" class="d-none" accept="image/png, image/jpeg, image/webp" @change="uploadImage"
-    multiple />
+  <input
+    type="file"
+    id="upload--img"
+    class="d-none"
+    accept="image/png, image/jpeg, image/webp"
+    @change="uploadImage"
+    multiple
+  />
 </template>
 <style lang="scss" scoped>
 .main-gallery {
