@@ -8,7 +8,7 @@ import DetailsPresentations from "./DetailsPresentations.vue";
 const useStore = useProductForm();
 const searchSunatCodes = ref("");
 const $props = defineProps<{
-  edit?:boolean
+  edit?: boolean;
 }>();
 onBeforeMount(() => {
   useStore.refreshForm();
@@ -96,7 +96,30 @@ onMounted(async () => {});
           >
           </AppTextField>
         </v-col>
-        <v-col cols="12" md="8">
+        <v-col cols="12" md="4">
+          <AppAutocomplete
+            label="Unidad de Medida (Base)"
+            :items="useStore.packagings"
+            v-model="useStore.form.presentation_base_id"
+            item-title="description"
+            item-value="id"
+            :rules="[requiredValidator]"
+          ></AppAutocomplete>
+        </v-col>
+        <v-col cols="12" md="4">
+          <AppSelect
+            label="Impuesto"
+            :items="useStore.taxes"
+            v-model="useStore.form.tax_id"
+            item-title="name"
+            item-value="id"
+            :rules="[requiredValidator]"
+            :disabled="useStore.form.requires_pricing === 'SI'"
+          ></AppSelect>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="12" md="12">
           <AppAutocomplete
             label="Codigo Sunat"
             @update:search="useStore.searchSunatCodes"
@@ -105,7 +128,13 @@ onMounted(async () => {});
             item-value="id"
             :rules="[requiredValidator]"
             v-model="useStore.form.sunat_product_code_id"
-          ></AppAutocomplete>
+          >
+            <template #append>
+              <v-btn>
+                <v-icon icon="tabler-plus"></v-icon>
+              </v-btn>
+            </template>
+          </AppAutocomplete>
         </v-col>
       </v-row>
       <v-row>
@@ -118,7 +147,7 @@ onMounted(async () => {});
           ></AppTextarea>
         </v-col>
       </v-row>
-      <v-row v-if="!(!!edit)">
+      <v-row v-if="!!!edit">
         <v-col cols="12" md="12">
           <VCheckbox
             v-model="useStore.form.requires_pricing"
@@ -180,7 +209,7 @@ onMounted(async () => {});
       <v-row>
         <v-col cols="12" md="4">
           <AppTextField
-            label="Costo Inicial"
+            label="Costo Unitario"
             placeholder="0.00"
             type="number"
             :rules="[requiredValidator]"
@@ -192,10 +221,9 @@ onMounted(async () => {});
   </v-card>
   <div class="py-2"></div>
   <DetailsPresentations
-    :edit="edit"
     v-if="useStore.form.requires_pricing === 'NO'"
+    :edit="edit"
     @details="(detail) => (useStore.form.presentations = detail)"
-    
   />
   <CategoryAddOrEdit
     v-model:modal="useStore.modalCategory"

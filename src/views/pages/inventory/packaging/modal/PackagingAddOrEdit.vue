@@ -20,6 +20,7 @@ const close = () => {
 };
 const form = ref<PackagingForm>({
   description: "",
+  code: "",
 });
 const save = async () => {
   try {
@@ -70,6 +71,14 @@ watch(
               placeholder="Nombre"
               :rules="[requiredValidator]"
             />
+          </VCol>
+          <VCol cols="12" md="4">
+            <AppTextField
+              label="Codigo"
+              v-model="form.code"
+              :rules="[requiredValidator]"
+              placeholder="Por ejemplo: PAQ"
+            ></AppTextField>
           </VCol>
         </VRow>
       </VForm>

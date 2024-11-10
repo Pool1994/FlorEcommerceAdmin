@@ -34,7 +34,8 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
     product_type: "NACIONAL",
     invoicing: "SI",
     requires_pricing: "NO",
-    presentations: []
+    presentations: [],
+    presentation_base_id: null as any
   });
   const modalCategory = ref<ModalProps<CategoryModel>>({
     show: false,
@@ -208,7 +209,8 @@ export const useProductForm = defineStore('productAddOrEditStore', () => {
       invoicing: "SI",
       maximun_stock: null as any,
       requires_pricing: "NO",
-      presentations: []
+      presentations: [],
+      presentation_base_id: null as any
 
     }
   }

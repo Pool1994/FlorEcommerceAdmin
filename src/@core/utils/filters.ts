@@ -1,43 +1,53 @@
 // import Vue from "vue"
-import moment from "moment";
+import moment from "moment-timezone";
+moment.tz.setDefault("America/Lima");
 export const myGlobal = (created_at: Date) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("MM/DD/YYYY");
   return "-";
 }
 export const myGlobalWithHour = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("MM/DD/YYYY h:mm A");
   return "-";
 }
 
 export const myDateGlobal = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("ddd, D MMM YYYY");
   return "-";
 }
 
 export const myDateGlobal2 = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("D MMM YYYY");
   return "-";
 }
 
 export const myDateGlobalWithHour = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("ddd, D MMM YYYY hh:mm A");
   return "-";
 }
 
 export const myTime = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at, "HH:mm:ss").format("hh:mm A")
   return "-";
 }
 
 export const myTimeOrNothing = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at, "HH:mm:ss").format("hh:mm A")
   return "-";
 }
 export const myFullTime = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at, "HH:mm:ss").format("HH:mm")
   return "-";
 }
 export const myGlobalDay = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("DD/MM/YYYY hh:mm A")
   return "-";
 }
@@ -57,10 +67,12 @@ export const countHour = (created_at: string) => {
   return "-"
 }
 export const myDate = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("MMMM Do YYYY")
   return "-";
 }
 export const formatDateFilter = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).format("YYYY-MM-DD");
   return "-";
 }
@@ -74,6 +86,7 @@ export const myMonthYear = (created_at: string) => {
 }
 
 export const myFromNow = (created_at: string) => {
+  console.log({ created_at });
   if (!isEmpty(created_at)) return moment(created_at).fromNow()
   return "-";
 }

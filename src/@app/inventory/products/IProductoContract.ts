@@ -2,6 +2,7 @@ import { YesNo } from "@/@app/shared/TypeCore";
 import { IDateAt } from "@/@core/utils/contracts-commons";
 import { BrandModel } from "../brand/IBrandContracts";
 import { CategoryModel } from "../category/ICategoryContracts";
+import { PackagingModel } from "../packaging/IPackagingContracts";
 import { SubCategoryModel } from "../subcategory/ISubCategoryContracts";
 
 export interface IProductForm {
@@ -27,6 +28,7 @@ export interface IProductForm {
   invoicing: "SI" | "NO",
   requires_pricing: "SI" | "NO",
   presentations: Array<IDetailPresentationProduct>;
+  presentation_base_id?: number;
 }
 export interface ProductModel extends IProductForm, IDateAt {
   id: number;
@@ -61,11 +63,14 @@ export interface IProductImageModel extends IProductImageForm {
   product_id: number;
 }
 export interface IDetailPresentationProduct {
-  presentation: string;
   presentation_id: number;
-  description?: string;
   conversion_factor: number;
   price: number;
+  unite_price: number;
+  product_id: number;
+  presentations: Array<PackagingModel>,
+  presentation?: string | null;
+  order: number;
 }
 export interface ISunatProductCode extends IDateAt {
   id: number;
