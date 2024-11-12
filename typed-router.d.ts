@@ -24,7 +24,7 @@ declare module 'vue-router/auto-routes' {
     'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
     'inventory-brands': RouteRecordInfo<'inventory-brands', '/inventory/brands', Record<never, never>, Record<never, never>>,
     'inventory-category': RouteRecordInfo<'inventory-category', '/inventory/category', Record<never, never>, Record<never, never>>,
-    'inventory-movements-tab': RouteRecordInfo<'inventory-movements-tab', '/inventory/movements/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
+    'inventory-inventory-movement-tab': RouteRecordInfo<'inventory-inventory-movement-tab', '/inventory/inventory-movement/:tab', { tab: ParamValue<true> }, { tab: ParamValue<false> }>,
     'inventory-presentation': RouteRecordInfo<'inventory-presentation', '/inventory/presentation', Record<never, never>, Record<never, never>>,
     'inventory-product': RouteRecordInfo<'inventory-product', '/inventory/product', Record<never, never>, Record<never, never>>,
     'inventory-product-edit-producto': RouteRecordInfo<'inventory-product-edit-producto', '/inventory/product/EditProducto', Record<never, never>, Record<never, never>>,

@@ -35,7 +35,7 @@ const inventory: Array<NavLink | NavGroup | NavSectionTitle> = [
       {
         title: 'Movimientos',
         to: {
-          name: "inventory-movements-tab",
+          name: "inventory-inventory-movement-tab",
           params: {
             tab: 'entries'
           }

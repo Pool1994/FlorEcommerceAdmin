@@ -1,8 +1,22 @@
-export class ApiGeneral {
+import { IApiMethods } from "./contract/IApiMethods";
+
+export class ApiPrueba implements IApiMethods {
   async get<TReturn, TParams>(url: string, params?: TParams) {
     try {
-      const { data } = await $axiosIns.get<TReturn>(url, { params });
-      return data;
+      return {
+        data: [
+          {
+            id: 1,
+            name: 'name',
+            description: 'description'
+          }
+        ],
+        total: 1,
+        per_page: 1,
+        current_page: 1,
+        last_page: 1,
+        to: 1
+      } as TReturn;
     } catch (e) {
       throw e;
     }

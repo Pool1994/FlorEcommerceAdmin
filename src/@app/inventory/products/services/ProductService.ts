@@ -1,4 +1,4 @@
-import { ApiGeneral } from "@/@app/shared/ApiGeneral";
+import { ApiGeneral } from "@/@app/shared/apis/ApiGeneral";
 import { ResponseHttpApi } from "@/@app/shared/ICrudOperation";
 import { ApiResponsePaginate } from "@/@core/utils/contracts-commons";
 import { ProductModel } from "../IProductoContract";
