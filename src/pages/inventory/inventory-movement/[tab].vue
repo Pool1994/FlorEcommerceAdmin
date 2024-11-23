@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ITabs } from "@/@app/shared/IShared";
-import EntrieView from "@/views/pages/inventory/inventory-movement/Entries/EntrieView.vue";
-import ExitView from "@/views/pages/inventory/inventory-movement/Exit/ExitView.vue";
-import PurchaseView from "@/views/pages/inventory/inventory-movement/Purchase/PurchaseView.vue";
-import SaleView from "@/views/pages/inventory/inventory-movement/Sale/SaleView.vue";
+import EntrieView from "@/views/pages/inventory/inventory-movement/lists/entries/EntrieView.vue";
+import ExitView from "@/views/pages/inventory/inventory-movement/lists/exit/ExitView.vue";
+import PurchaseView from "@/views/pages/inventory/inventory-movement/lists/purchase/PurchaseView.vue";
+import SaleView from "@/views/pages/inventory/inventory-movement/lists/sale/SaleView.vue";
 
 const route = useRoute("inventory-inventory-movement-tab");
 const tab = computed({
@@ -37,7 +37,7 @@ const tabItemContent = "croissant.";
 </script>
 <template>
   <VCard>
-    <VTabs v-model="currentTab">
+    <VTabs v-model="currentTab" density="compact">
       <VTab
         v-for="(item, index) in tabs"
         :key="index"

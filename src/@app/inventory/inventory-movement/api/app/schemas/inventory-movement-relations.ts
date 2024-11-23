@@ -19,3 +19,13 @@ export interface ReasonInventoryMovementSchemaApi {
   id: number;
   name: string;
 }
+export enum MovementTypeApi {
+  Entrie = "ENTRADA",
+  Exit = "SALIDA"
+}
+export enum MovementDestinationApi {
+  Inventory = "INVENTARIO",
+  Purchase = "COMPRAS",
+  Sale = "VENTAS"
+}
+

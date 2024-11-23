@@ -59,3 +59,10 @@ export async function urlToFile(blobUrl: string, fileName: string, mimeType: Mim
   return file;
 }
 
+export const mergeInstances = <T>(...instances: T[]): T => {
+  const result = {} as T;
+  for (const instance of instances) {
+    Object.defineProperties(result, Object.getOwnPropertyDescriptors(instance));
+  }
+  return result;
+};

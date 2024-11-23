@@ -48,6 +48,7 @@ declare module 'vue' {
     Filter: typeof import('./src/@core/components/common/Filter.vue')['default']
     FormDialog: typeof import('./src/@core/components/common/FormDialog.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
+    LegendForm: typeof import('./src/@core/components/common/LegendForm.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']
     Notifications: typeof import('./src/@core/components/Notifications.vue')['default']
     PaymentProvidersDialog: typeof import('./src/components/dialogs/PaymentProvidersDialog.vue')['default']

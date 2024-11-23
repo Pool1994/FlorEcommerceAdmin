@@ -96,6 +96,7 @@ declare global {
   const mapStores: typeof import('pinia')['mapStores']
   const mapWritableState: typeof import('pinia')['mapWritableState']
   const markRaw: typeof import('vue')['markRaw']
+  const mergeInstances: typeof import('./src/@core/utils/helpers')['mergeInstances']
   const myDate: typeof import('./src/@core/utils/filters')['myDate']
   const myDateGlobal: typeof import('./src/@core/utils/filters')['myDateGlobal']
   const myDateGlobal2: typeof import('./src/@core/utils/filters')['myDateGlobal2']
@@ -492,6 +493,7 @@ declare module 'vue' {
     readonly mapStores: UnwrapRef<typeof import('pinia')['mapStores']>
     readonly mapWritableState: UnwrapRef<typeof import('pinia')['mapWritableState']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
+    readonly mergeInstances: UnwrapRef<typeof import('./src/@core/utils/helpers')['mergeInstances']>
     readonly myDate: UnwrapRef<typeof import('./src/@core/utils/filters')['myDate']>
     readonly myDateGlobal2: UnwrapRef<typeof import('./src/@core/utils/filters')['myDateGlobal2']>
     readonly myDateGlobal: UnwrapRef<typeof import('./src/@core/utils/filters')['myDateGlobal']>

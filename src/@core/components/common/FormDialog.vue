@@ -27,6 +27,7 @@ const onCancel = () => {
     persistent
     offset="v-dialog"
     :scrollable="scrollable"
+    location="start top"
   >
     <!-- Dialog close btn -->
     <DialogCloseBtn @click.prevent="onCancel" />
